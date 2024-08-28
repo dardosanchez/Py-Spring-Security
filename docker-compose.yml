@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  proyecto-final-spring-security:
+    build: ProyectoFinalSpringSecurity
+    mem_limit: 512m
+    ports:
+      - "8080:8080"
+    environment:
+      - BD_URL=${BD_URL}
+      - BD_USER=${BD_USER}
+      - BD_PASSWORD=${BD_PASSWORD}
+      - SS_USER=${SS_USER}
+      - SS_PASSWORD=${SS_PASSWORD}
+      - PRIVATE_KEY=${PRIVATE_KEY}
+      - USER_GENERATOR=${USER_GENERATOR}
+      - GH_CLIENT_ID=${GH_CLIENT_ID}
+      - GH_CLIENT_SECRET=${GH_CLIENT_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+    restart: always
+    depends_on:
+      db_ProyFinal:
+        condition: service_healthy
+
+  db_ProyFinal:
+    image: mysql:8.0.33
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    restart: always
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","localhost"]
+      timeout: 10s
+      retries: 10
